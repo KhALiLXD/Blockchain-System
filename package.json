@@ -1,0 +1,15 @@
+{
+  "name": "blockchain-system",
+  "version": "1.0.0",
+  "description": "this is my first blockchian system",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
+  }
+}
