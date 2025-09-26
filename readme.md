@@ -1,5 +1,5 @@
 # Centralized Blockchain API (Node.js)
-`Important Note: I admit that this project fully made by me, only boring documentation part was assisted by ChatGPT.`
+`Important Note: this project fully made by me, only boring documentation part was assisted by ChatGPT.`
 
 This repository contains a **centralized blockchain API** for the second assignment. One process (single authority) creates, mines, validates, and serves the chain. **No peer-to-peer networking** — this is an educational model to demonstrate blockchain mechanics in a central system.
 
