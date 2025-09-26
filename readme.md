@@ -1,4 +1,5 @@
 # Simple Blockchain (Node.js)
+`Important Note: I admit that this project fully made by me, only boring documentation part was assisted by ChatGPT.`
  - This is the 1st Assignment of Blockchain development.
 ## 📂 Project Structure
 
