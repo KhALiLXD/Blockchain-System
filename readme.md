@@ -33,7 +33,6 @@ README.md
 **GET** `/blocks`
 
 * Returns the full blockchain.
-* Query param: `?limit=N` → returns the last N blocks.
 
 **Response 200**
 
@@ -103,19 +102,26 @@ README.md
 
 ```json
 {
-  "height": 2,
-  "timestamp": 1758789020000,
-  "data": { "amount": 150, "note": "invoice#123" },
-  "previousHash": "00e61e7...",
-  "nonce": 80,
-  "hash": "0034c46..."
+    "success": true,
+    "message": "Block added successfully",
+    "timetaken": "440.4",
+    "newBlock": {
+        "height": 5,
+        "timestamp": 1758877636832,
+        "previousHash": "00008f53728276..",
+        "nonce": 225474,
+        "hash": "00008c50ea3fbc.."
+    }
 }
 ```
 
-**Response 400**
+**Response 500**
 
 ```json
-{ "error": "Missing data" }
+{
+  "success": false,
+  "message": "Chain compromised, block not added"
+}
 ```
 
 ---
@@ -129,13 +135,13 @@ README.md
 **Response 200**
 
 ```json
-{ "valid": true }
+{ "message": "Blockchain is valid"}
 ```
 
-**Response 200 (invalid)**
+**Response 500**
 
 ```json
-{ "valid": false, "error": "Block 2 tampered!" }
+{ "message": "Blockchain is compromised" }
 ```
 
 ---
