@@ -1,18 +1,28 @@
-const Blockchain = require('./assets/chain.js')
+const Blockchain = require('./blockchain/chain.js')
+const express =require('express')
+
+const app = express()
+const port = 2525;
 
 
+
+app.use('/', require('./routes/blockchain.routes.js'));
+
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
 // Create a new blockchain instance
-const myBlockchain = new Blockchain();
 
 
 
 // Create the genesis block
-t0 = performance.now();
-console.log('Mining started...');
-myBlockchain.setBlock({ amount: 100 })
-t1 = performance.now();
-console.log("New block Generated\n", myBlockchain.getLastBlock());
-console.log(`Mining took ${(t1 - t0).toFixed(1)} ms`);
+// t0 = performance.now();
+// console.log('Mining started...');
+// myBlockchain.setBlock({ amount: 100 })
+// t1 = performance.now();
+// console.log(`Mining took ${(t1 - t0).toFixed(1)} ms`);
+// myBlockchain.checkChainValidity(2);
 
 
 
