@@ -1,97 +1,171 @@
-# Simple Blockchain (Node.js)
- - This is the 1st Assignment of Blockchain development.
+# Centralized Blockchain API (Node.js)
+`Important Note: I admit that this project fully made by me, only boring documentation part was assisted by ChatGPT.`
+
+This repository contains a **centralized blockchain API** for the second assignment. One process (single authority) creates, mines, validates, and serves the chain. **No peer-to-peer networking** — this is an educational model to demonstrate blockchain mechanics in a central system.
+
+---
+
 ## 📂 Project Structure
 
 ```
 /assets
-  ├── block.js   # Block class (structure, hashing, mining)
-  └── chain.js   # Blockchain class (genesis, add block, explorer,get block)
-index.js         # Entry point, demo usage
+  ├── block.js    # Block class (structure, hashing, mining)
+  └── chain.js    # Blockchain class (genesis, add/get/explore, validation)
+/controllers
+  └── blockchain.controller.js   # Logic for handling requests
+/routes
+  └── blockchain.routes.js       # Express routes mapping
+index.js       # Express app (API entry point)
+package.json   # scripts, dependencies
+README.md
 ```
 
 ---
 
-## 🧱 Features
+## 🌐 API Documentation
 
-* **Block class**:
+**Base URL:** `http://localhost:3000`
 
-  * `height`, `timestamp`, `data`, `previousHash`, `nonce`, `hash`
-  * `calculateHash()` → computes SHA-256 hash of the block
-  * `mineBlock(difficulty)` → Proof-of-Work: finds a nonce such that the hash starts with N zeros
+### Endpoints
 
-* **Blockchain class**:
+#### 1. Get All Blocks
 
-  * Creates a **genesis block**
-  * `setBlock(data)` → mines and adds a new block
-  * `getBlock(height)` → retrieves block by height
-  * `getLastBlock()` → returns latest block
-  * `blocksExplorer()` → prints full chain
+**GET** `/blocks`
 
-* **Centralized system**:
-  All data is managed in a single process — there is no peer-to-peer network.
+* Returns the full blockchain.
+* Query param: `?limit=N` → returns the last N blocks.
+
+**Response 200**
+
+```json
+[
+  {
+    "height": 0,
+    "timestamp": 1758789014435,
+    "data": { "amount": 0 },
+    "previousHash": "0",
+    "nonce": 0,
+    "hash": "949d27..."
+  },
+  {
+    "height": 1,
+    "timestamp": 1758789014436,
+    "data": { "amount": 100 },
+    "previousHash": "949d27...",
+    "nonce": 39,
+    "hash": "00e61e7..."
+  }
+]
+```
 
 ---
 
-## 🚀 Usage
+#### 2. Get Block by Height
 
-### Run
+**GET** `/block/:height`
+
+* Path param: `height` → block index.
+
+**Response 200**
+
+```json
+{
+  "height": 1,
+  "timestamp": 1758789014436,
+  "data": { "amount": 100 },
+  "previousHash": "949d27...",
+  "nonce": 39,
+  "hash": "00e61e7..."
+}
+```
+
+**Response 404**
+
+```json
+{ "error": "Block not found" }
+```
+
+---
+
+#### 3. Mine a New Block
+
+**POST** `/mine`
+
+* Body JSON:
+
+```json
+{
+  "data": { "amount": 150, "note": "invoice#123" }
+}
+```
+
+**Response 201**
+
+```json
+{
+  "height": 2,
+  "timestamp": 1758789020000,
+  "data": { "amount": 150, "note": "invoice#123" },
+  "previousHash": "00e61e7...",
+  "nonce": 80,
+  "hash": "0034c46..."
+}
+```
+
+**Response 400**
+
+```json
+{ "error": "Missing data" }
+```
+
+---
+
+#### 4. Validate Blockchain
+
+**GET** `/validate`
+
+* Checks chain linkage, integrity, and Proof of Work.
+
+**Response 200**
+
+```json
+{ "valid": true }
+```
+
+**Response 200 (invalid)**
+
+```json
+{ "valid": false, "error": "Block 2 tampered!" }
+```
+
+---
+
+## 🚀 Running the API
 
 ```bash
-node index.js
+npm install
+npm start
 ```
 
-### 3. Example Output
-
-```
-Mining started...
-New block Generated
- Block {
-   height: 1,
-   timestamp: '1758789014436',
-   data: { amount: 100 },
-   previousHash: '949d27...',
-   nonce: 39,
-   hash: '00e61e7...93bf5'
- }
-Mining took 2.8 ms
-```
+Server starts at `http://localhost:3000`.
 
 ---
 
-## 🧪 Testing
+## 🧪 Notes
 
-* **Add new blocks**:
-
-  ```js
-  myBlockchain.setBlock({ amount: 150 });
-  ```
-* **Explore chain**:
-
-  ```js
-  myBlockchain.blocksExplorer();
-  ```
-* **Tamper test** (commented in `index.js`):
-
-  * Change a block’s data
-  * Compare `block.hash` vs `block.calculateHash()`
-  * Result: mismatch proves the chain is broken without re-mining
+* Difficulty is set in `chain.js` (default = 4).
+* Mining time increases exponentially with difficulty.
+* Centralized design: all requests are handled by **one server**.
 
 ---
 
-## 📖 Notes
+## ✨ Assignment Checklist
 
-* Difficulty is currently set to `4` (see `chain.js`).
-* Mining time grows exponentially with difficulty.
-* This is a **teaching demo**, not production-ready.
-
----
-
-## ✨ Assignment Requirement
-
-* ✅ Full blockchain structure (Block + Blockchain classes)
-* ✅ Functions: setBlock, getBlock, blocksExplorer, mineBlock
-* ✅ Central system (no networking, one chain instance)
+* ✅ Full blockchain structure (Block + Blockchain)
+* ✅ Functions exposed via API: `setBlock`, `getBlock`, `blocksExplorer`, `mineBlock`, `validateChain`
+* ✅ Central system (single authority API)
 * ✅ Uploaded to GitHub with README
 
 ---
-# Made with 💖 By Khalil Alyacoubi - 120210461
+
+# Made with 💖 by Khalil Alyacoubi – 120210461
