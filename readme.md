@@ -53,6 +53,7 @@ npm install
 ```bash
 pm2 start ecosystem.config.js
 ```
+**Note:** You can edit `ecosystem.config.js` to change ports or add more nodes.
 ### 3. Test mining
 
 - Same as Assiment 2 endpoints.
