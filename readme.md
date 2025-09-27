@@ -1,9 +1,7 @@
 # Simple Decentralized Blockchain with P2P (Node.js)
+> Important Note: this project fully made by me, only boring documentation part was assisted by ChatGPT.
 
 ## 📌 Overview
-`Important Note: this project fully made by me, only boring documentation part was assisted by ChatGPT.`
-
-
 
 This project is a **minimal blockchain system** built with Node.js.
 It supports:
@@ -51,7 +49,7 @@ npm install
 ```
 
 ### 2. Run one node
-
+> This will run a test of three nodes on ports 3001, 3002, and 3003.
 ```bash
 pm2 start ecosystem.config.js
 ```
