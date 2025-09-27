@@ -5,7 +5,7 @@ class Blockchain {
         this.difficulty = 4;
     }
     createGenesisBlock() {
-        return new Block(0, Date.now(), { amount: 0 }, "0");
+        return new Block(0, 1700000000000, { amount: 0 }, "0");
     }
     getLastBlock(){
         return this.chain.at(-1);
@@ -14,14 +14,14 @@ class Blockchain {
     setBlock(data){
         const prev = this.getLastBlock();
         const newBlock = new Block(prev.height + 1, Date.now(), data, prev.hash);
-        console.log('Mining started...');
+        console.log('[System] Mining started...');
         const t0 = performance.now();
         newBlock.mineBlock(this.difficulty);
         if (this.checkChainValidity()) {
             this.chain.push(newBlock);
             const t1 = performance.now();
-            console.log("\x1b[32m%s\x1b[0m","[System] New block Generated\n", this.getLastBlock());
-            console.log(`Mining took ${(t1 - t0).toFixed(1)} ms`);
+            console.log("\x1b[32m%s\x1b[0m","[System] New block Generated");
+            console.log(`[System] Mining took ${(t1 - t0).toFixed(1)} ms`);
             return {
                 success: true,
                 message: "Block added successfully",
@@ -30,7 +30,7 @@ class Blockchain {
             };
          
         }else{
-            console.log("\x1b[31m%s\x1b[0m","[error] Chain compromised, block not added");
+            console.log("\x1b[31m%s\x1b[0m","[Error] Chain compromised, block not added");
             return {
                 success: false,
                 message: "Chain compromised, block not added"
@@ -51,6 +51,7 @@ class Blockchain {
         for (let index = 0; index < chain.length; index++) {
             const block = chain[index];
             const prevBlock = chain[index - 1];
+            
             if (block.hash !== block.calculateHash()) {
                 return false;
             }

@@ -4,6 +4,7 @@ class Block {
   constructor(height, timestamp, data, previousHash = '') {
     this.height = height;
     this.timestamp = timestamp;
+    this.merkle_root = 0; 
     this.data = data;
     this.previousHash = previousHash;
     this.nonce = 0; 
@@ -11,7 +12,7 @@ class Block {
   }
 
   calculateHash() {
-    const data = this.height + this.timestamp + JSON.stringify(this.data) + this.previousHash + this.nonce;
+    const data = this.height + this.timestamp + this.merkle_root + JSON.stringify(this.data) + this.previousHash + this.nonce;
     return crypto.createHash('sha256').update(data).digest('hex');
   }
 

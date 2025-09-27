@@ -1,14 +1,16 @@
-const Blockchain = require('../blockchain/chain.js');
-const myBlockchain = new Blockchain();
+const { broadcast } = require('../p2p/p2p.js');
+const { blockchain } = require('../modules/blockchain.js'); 
+
 exports.getBlocks = (req, res) => {
-    const blocks = myBlockchain.blocksExplorer();
+    const blocks = blockchain.blocksExplorer();
     res.send(blocks);
 }
 
 exports.mineblock = (req, res) => {
     const data = req.body;
-    const result = myBlockchain.setBlock(data);
+    const result = blockchain.setBlock(data);
     if (result.success) {
+        broadcast({ type: "NEW_BLOCK", block: blockchain.getLastBlock(), from: process.env.NODE_NAME });
         res.status(201).send(result);
     }
     else {
@@ -18,7 +20,7 @@ exports.mineblock = (req, res) => {
 
 exports.getblock = (req, res) => {
     const height = parseInt(req.params.height);
-    const block = myBlockchain.getBlock(height);
+    const block = blockchain.getBlock(height);
     if (block) {
         res.send(block);
     } else {
@@ -27,7 +29,7 @@ exports.getblock = (req, res) => {
 }
 
 exports.checkChainValidity = (req, res) => {
-    const isValid = myBlockchain.checkChainValidity();
+    const isValid = blockchain.checkChainValidity();
     if (isValid) {
         res.send({ message: "Blockchain is valid" });
     }

@@ -1,10 +1,17 @@
 const Blockchain = require('./blockchain/chain.js')
 const express =require('express')
+require('dotenv').config();
 
 const app = express()
-const port = 2525;
+app.use(express.json());     
+const port = process.env.HTTP_PORT || 3000;
+const { startP2P, connectToPeers } = require('./p2p/p2p.js');
 
+const P2P_PORT = Number(process.env.P2P_PORT || 6001);
+const PEERS = (process.env.PEERS || '').split(',').map(s => s.trim()).filter(Boolean);
 
+startP2P(P2P_PORT);
+connectToPeers(PEERS);
 
 app.use('/', require('./routes/blockchain.routes.js'));
 

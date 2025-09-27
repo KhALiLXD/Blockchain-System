@@ -1,177 +1,90 @@
-# Centralized Blockchain API (Node.js)
+# Simple Decentralized Blockchain with P2P (Node.js)
+
+## 📌 Overview
 `Important Note: this project fully made by me, only boring documentation part was assisted by ChatGPT.`
 
-This repository contains a **centralized blockchain API** for the second assignment. One process (single authority) creates, mines, validates, and serves the chain. **No peer-to-peer networking** — this is an educational model to demonstrate blockchain mechanics in a central system.
+
+
+This project is a **minimal blockchain system** built with Node.js.
+It supports:
+
+* Mining blocks with Proof of Work (adjustable difficulty).
+* Running multiple nodes on different ports.
+* P2P synchronization between nodes using WebSockets.
+* REST API for interacting with the blockchain.
+* Process management and testing via **PM2**.
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Features
 
-```
-/assets
-  ├── block.js    # Block class (structure, hashing, mining)
-  └── chain.js    # Blockchain class (genesis, add/get/explore, validation)
-/controllers
-  └── blockchain.controller.js   # Logic for handling requests
-/routes
-  └── blockchain.routes.js       # Express routes mapping
-index.js       # Express app (API entry point)
-package.json   # scripts, dependencies
-README.md
-```
+* **Blockchain Core**
+  Each node maintains its own chain and validates new blocks.
 
----
+* **P2P Network**
+  Nodes connect to each other using WebSockets.
+  Messages include:
 
-## 🌐 API Documentation
+  * `HELLO / WELCOME` → handshake
+  * `REQ_CHAIN / RES_CHAIN` → syncing the full chain
+  * `NEW_BLOCK` → broadcasting mined blocks to all peers
 
-**Base URL:** `http://localhost:3000`
+* **Consensus**
 
-### Endpoints
+  * On startup, a node requests the chain from its peers.
+  * If a longer valid chain is found → it replaces its own.
+  * When a new block is mined, it’s broadcast to the network and appended if valid.
 
-#### 1. Get All Blocks
+* **REST API**
 
-**GET** `/blocks`
-
-* Returns the full blockchain.
-
-**Response 200**
-
-```json
-[
-  {
-    "height": 0,
-    "timestamp": 1758789014435,
-    "data": { "amount": 0 },
-    "previousHash": "0",
-    "nonce": 0,
-    "hash": "949d27..."
-  },
-  {
-    "height": 1,
-    "timestamp": 1758789014436,
-    "data": { "amount": 100 },
-    "previousHash": "949d27...",
-    "nonce": 39,
-    "hash": "00e61e7..."
-  }
-]
-```
+  * `GET /blocks` → view the chain
+  * `POST /mine` → mine a new block with data payload
 
 ---
 
-#### 2. Get Block by Height
+## 🚀 Run Locally
 
-**GET** `/block/:height`
-
-* Path param: `height` → block index.
-
-**Response 200**
-
-```json
-{
-  "height": 1,
-  "timestamp": 1758789014436,
-  "data": { "amount": 100 },
-  "previousHash": "949d27...",
-  "nonce": 39,
-  "hash": "00e61e7..."
-}
-```
-
-**Response 404**
-
-```json
-{ "error": "Block not found" }
-```
-
----
-
-#### 3. Mine a New Block
-
-**POST** `/mine`
-
-* Body JSON:
-
-```json
-{
-  "data": { "amount": 150, "note": "invoice#123" }
-}
-```
-
-**Response 201**
-
-```json
-{
-    "success": true,
-    "message": "Block added successfully",
-    "timetaken": "440.4",
-    "newBlock": {
-        "height": 5,
-        "timestamp": 1758877636832,
-        "previousHash": "00008f53728276..",
-        "nonce": 225474,
-        "hash": "00008c50ea3fbc.."
-    }
-}
-```
-
-**Response 500**
-
-```json
-{
-  "success": false,
-  "message": "Chain compromised, block not added"
-}
-```
-
----
-
-#### 4. Validate Blockchain
-
-**GET** `/validate`
-
-* Checks chain linkage, integrity, and Proof of Work.
-
-**Response 200**
-
-```json
-{ "message": "Blockchain is valid"}
-```
-
-**Response 500**
-
-```json
-{ "message": "Blockchain is compromised" }
-```
-
----
-
-## 🚀 Running the API
+### 1. Install dependencies
 
 ```bash
 npm install
-npm start
 ```
 
-Server starts at `http://localhost:3000`.
+### 2. Run one node
+
+```bash
+pm2 start ecosystem.config.js
+```
+### 3. Test mining
+
+- Same as Assiment 2 endpoints.
+
+The new block will be broadcasted to **all connected peers** and added to their chains if valid.
 
 ---
 
-## 🧪 Notes
+## 🔄 Sync Logic
 
-* Difficulty is set in `chain.js` (default = 4).
-* Mining time increases exponentially with difficulty.
-* Centralized design: all requests are handled by **one server**.
+* When a node connects, it sends `REQ_CHAIN`.
+* Peers reply with `RES_CHAIN` (their chain).
+* The new node compares lengths:
+
+  * If the peer chain is longer and valid → it replaces its own.
+* When a block is mined, it’s broadcast as `NEW_BLOCK`.
+* Peers verify:
+
+  * `previousHash` matches their last block
+  * `height` is correct
+  * `hash` is valid Proof of Work
+* If valid → they append it.
 
 ---
 
-## ✨ Assignment Checklist
+## 📝 Notes
 
-* ✅ Full blockchain structure (Block + Blockchain)
-* ✅ Functions exposed via API: `setBlock`, `getBlock`, `blocksExplorer`, `mineBlock`, `validateChain`
-* ✅ Central system (single authority API)
-* ✅ Uploaded to GitHub with README
+* Genesis block is the same for all nodes (same timestamp/data).
+* Chain validity checks ensure no invalid blocks are added.
+* This is a **learning project** → simplified (no Merkle Trees, no transactions pool).
 
----
 
-# Made with 💖 by Khalil Alyacoubi – 120210461
+# Made with ❤️ by Khalil Alyacoubi - 120210461
