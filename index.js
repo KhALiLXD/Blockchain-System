@@ -1,18 +1,35 @@
-const Blockchain = require('./assets/chain.js')
+const Blockchain = require('./blockchain/chain.js')
+const express =require('express')
+require('dotenv').config();
+
+const app = express()
+app.use(express.json());     
+const port = process.env.HTTP_PORT || 3000;
+const { startP2P, connectToPeers } = require('./p2p/p2p.js');
+
+const P2P_PORT = Number(process.env.P2P_PORT || 6001);
+const PEERS = (process.env.PEERS || '').split(',').map(s => s.trim()).filter(Boolean);
+
+startP2P(P2P_PORT);
+connectToPeers(PEERS);
+
+app.use('/', require('./routes/blockchain.routes.js'));
 
 
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
 // Create a new blockchain instance
-const myBlockchain = new Blockchain();
 
 
 
 // Create the genesis block
-t0 = performance.now();
-console.log('Mining started...');
-myBlockchain.setBlock({ amount: 100 })
-t1 = performance.now();
-console.log("New block Generated\n", myBlockchain.getLastBlock());
-console.log(`Mining took ${(t1 - t0).toFixed(1)} ms`);
+// t0 = performance.now();
+// console.log('Mining started...');
+// myBlockchain.setBlock({ amount: 100 })
+// t1 = performance.now();
+// console.log(`Mining took ${(t1 - t0).toFixed(1)} ms`);
+// myBlockchain.checkChainValidity(2);
 
 
 
